@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/bin/sh
 #
 # 1. Logon as SU
 # 2. Copy base config to server
@@ -12,27 +12,23 @@
 
 
 
-�ки bash:
 set -x
 
-�ные:
-USER="admin"
-PASSWD="123456"
+USER="user"
+PASSWD="1"
 
-#Файл логов:
-LOG="ssh_conn.log"
+#LOG="ssh_conn_$H.log"
 
-#Список хостов:
 HOSTS="
-192.168.10.10
-192.168.10.11
-192.168.10.12
+192.168.56.4
+192.168.56.5
+192.168.56.6
 "
 
 for H in $HOSTS
 do
+LOG="ssh_conn_$H.log"
 
-�пта:
 echo START SCRIPT: >> $LOG
 date +%x-%R >> $LOG
 
@@ -41,7 +37,6 @@ COMM="
 #log_file debug.log
 #exp_internal 1
 
-е expect
 set timeout 1
 
 #Соедиение ssh:
@@ -50,20 +45,17 @@ expect \"*(yes/no)?*\" {send \"yes\r\"}
 expect \"Password:\"
 send \"$PASSWD\r\"
 
-манды:
 expect \"*>\"
-send \"show ver | include IOS\r\"
+send \"uname -a & df -h\r\"
 expect \"*>\"
 send \"exit\r\"
 
-�ия expect:
 expect eof
 "
 
 � команд:
 expect -c "$COMM" >> $LOG
 
-теля:
 echo ========================================================================= >> $LOG
 
 done
