@@ -1,4 +1,4 @@
-#!/usr/bin/expect -f
+#!/usr/bin/sh
 #
 # 1. Logon as SU
 # 2. Copy base config to server
@@ -12,35 +12,58 @@
 
 
 
-set prompt "#\>|\\\$"
-spawn ssh USER@HOST
+�ки bash:
+set -x
 
-expect {
-	"(yes/no)" {send "yes\r";exp_continue}
-	"password"
-}
-send "su\r"
-expect "password:"
+�ные:
+USER="admin"
+PASSWD="123456"
 
+#Файл логов:
+LOG="ssh_conn.log"
 
-set timeout 2
-set USER "user"
-set PASS "1"
-set HOST "192.168.56.6"
-set SUPASS "1"
-spawn ssh $USER@$HOST;
- 
-expect {
- 
-"(yes/no)?*" {
-send "yes\r"
- }
-}
-expect "word:"
-send "$PASS\r"
-expect "$*"
-send "su $argv\r"
-expect "$*"
-send "$SUPASS\r"
-send "df -h"
+#Список хостов:
+HOSTS="
+192.168.10.10
+192.168.10.11
+192.168.10.12
+"
+
+for H in $HOSTS
+do
+
+�пта:
+echo START SCRIPT: >> $LOG
+date +%x-%R >> $LOG
+
+COMM="
+
+#log_file debug.log
+#exp_internal 1
+
+е expect
+set timeout 1
+
+#Соедиение ssh:
+spawn ssh $USER@$H
+expect \"*(yes/no)?*\" {send \"yes\r\"}
+expect \"Password:\"
+send \"$PASSWD\r\"
+
+манды:
+expect \"*>\"
+send \"show ver | include IOS\r\"
+expect \"*>\"
+send \"exit\r\"
+
+�ия expect:
 expect eof
+"
+
+� команд:
+expect -c "$COMM" >> $LOG
+
+теля:
+echo ========================================================================= >> $LOG
+
+done
