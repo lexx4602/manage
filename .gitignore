@@ -1,1 +1,3 @@
 ssh_conn*.log
+www/config/db.php
+www/config/params.php
